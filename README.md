@@ -3,18 +3,6 @@
 
 API REST desarrollada con Spring Boot para la gestión de usuarios, cuentas bancarias y consulta de cotizaciones del dólar.
 
-## Tecnologías
-
-- Java 17
-- Spring Boot
-- Spring Data JPA
-- MySQL
-- Docker
-- Swagger/OpenAPI
-- Maven
-- JUnit 5
-- Mockito
-
 ## Funcionalidades
 
 ### Usuarios
