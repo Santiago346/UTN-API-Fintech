@@ -2,8 +2,7 @@ package api_fintech.Accounts.Dtos;
 
 import java.time.LocalDate;
 
-public record AccountResponse(
-        Long id,
+public record RequestAccountDTO(
         Long userId,
         Integer numeroCuenta,
         String moneda,

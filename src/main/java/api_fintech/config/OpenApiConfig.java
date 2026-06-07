@@ -14,6 +14,6 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("API de Cuentas")
                         .version("1.0")
-                        .description("API para gestión de cuentas y cotizaciones del dólar"));
+                        .description("API para gestión de cuentas bancarias y cotizaciones del dólar"));
     }
 }

@@ -3,14 +3,17 @@ package api_fintech.Account;
 import api_fintech.Accounts.Account;
 import api_fintech.Accounts.AccountRepository;
 import api_fintech.Accounts.AccountService;
-import api_fintech.Accounts.Dtos.AccountResponse;
+import api_fintech.Accounts.Dtos.AccountResponseDTO;
+import api_fintech.Accounts.Dtos.RequestAccountDTO;
 import api_fintech.Users.User;
+import api_fintech.Users.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +25,9 @@ class AccountServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private AccountService accountService;
@@ -43,7 +49,7 @@ class AccountServiceTest {
         when(accountRepository.findById(1L))
                 .thenReturn(Optional.of(account));
 
-        AccountResponse result = accountService.getAccount(1L);
+        AccountResponseDTO result = accountService.getAccount(1L);
 
         assertNotNull(result);
         assertEquals(1L, result.id());
@@ -87,43 +93,70 @@ class AccountServiceTest {
 
     @Test
     void deberiaCrearCuenta() {
+        Long userId = 1L;
 
-        Account account = new Account();
-        account.setId(1L);
+        RequestAccountDTO requestDto = new RequestAccountDTO(
+                userId, 123456, "ARS", 1000.0, true, LocalDate.now(), LocalDate.now()
+        );
 
-        when(accountRepository.save(account))
-                .thenReturn(account);
+        User userMock = new User();
+        userMock.setId(userId);
 
-        Account result = accountService.createAccount(account);
+        Account accountGuardada = Account.builder()
+                .id(1L)
+                .user(userMock)
+                .numeroCuenta(requestDto.numeroCuenta())
+                .moneda(requestDto.moneda())
+                .saldo(requestDto.saldo())
+                .activo(requestDto.activo())
+                .fechaCreacion(requestDto.fechaCreacion())
+                .fechaModificacion(requestDto.fechaModificacion())
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userMock));
+
+        when(accountRepository.save(any(Account.class))).thenReturn(accountGuardada);
+
+        Account result = accountService.createAccount(requestDto);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
+        assertEquals("ARS", result.getMoneda());
 
-        verify(accountRepository).save(account);
+        verify(userRepository).findById(userId);
+        verify(accountRepository).save(any(Account.class));
     }
 
     @Test
     void deberiaActualizarCuenta() {
+        Long accountId = 1L;
 
-        Account oldAccount = new Account();
-        oldAccount.setId(1L);
+        RequestAccountDTO requestDto = new RequestAccountDTO(
+                1L, 987654, "USD", 5000.0, true, LocalDate.now(), LocalDate.now()
+        );
 
-        Account updatedAccount = new Account();
-        updatedAccount.setId(1L);
+        Account oldAccount = Account.builder()
+                .id(accountId)
+                .numeroCuenta(123456)
+                .moneda("ARS")
+                .saldo(1000.0)
+                .activo(true)
+                .build();
 
-        when(accountRepository.findById(1L))
-                .thenReturn(Optional.of(oldAccount));
+        when(accountRepository.findById(accountId)).thenReturn(Optional.of(oldAccount));
 
-        when(accountRepository.save(updatedAccount))
-                .thenReturn(updatedAccount);
+        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Account result = accountService.updateAccount(1L, updatedAccount);
+        Account result = accountService.updateAccount(accountId, requestDto);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals(accountId, result.getId());
+        assertEquals(987654, result.getNumeroCuenta());
+        assertEquals("USD", result.getMoneda());
+        assertEquals(5000.0, result.getSaldo());
 
-        verify(accountRepository).findById(1L);
-        verify(accountRepository).save(updatedAccount);
+        verify(accountRepository).findById(accountId);
+        verify(accountRepository).save(any(Account.class));
     }
 
     @Test

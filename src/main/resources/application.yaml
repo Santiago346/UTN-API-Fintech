@@ -6,9 +6,9 @@ spring:
     name: api-fintech
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
+    url: "${DB_URL}"
+    username: "${DB_USER}"
+    password: "${DB_PASSWORD}"
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -22,4 +22,4 @@ spring:
 
   dolar:
     api:
-      url: ${DOLAR_API}
+      url: "${DOLAR_API}"
