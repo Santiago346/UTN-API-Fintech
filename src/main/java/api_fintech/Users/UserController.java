@@ -22,7 +22,7 @@ public class UserController {
 
     @Operation(summary = "Crear un usuario", description = "Crea un usuario para luego poder crear una cuenta bancaria")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario creadao exitosamente"),
+            @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente"),
             @ApiResponse(responseCode = "400", description = "JSON inválido o error de validación en los datos de entrada"),
     })
     @PostMapping("/add")
